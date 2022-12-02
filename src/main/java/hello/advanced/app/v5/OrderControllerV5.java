@@ -17,7 +17,9 @@ public class OrderControllerV5 {
 
     private final TraceTemplate template;
 
-
+    // 자체 의존관계 주입도 된다.
+    // 콜백을 념겨주면 콜백 함수는 뒤에서 실행된다.
+    // 템플릿 콜백 패턴 핵심
     public OrderControllerV5(OrderServiceV5 orderService, LogTrace trace) {
         this.orderService = orderService;
         this.template = new TraceTemplate(trace);
@@ -26,9 +28,9 @@ public class OrderControllerV5 {
     @GetMapping("/v5/request")
     public String request(@RequestParam String itemId){
 
-        template.execute("OrderController.request()", new TraceCallback<>() {
+        return template.execute("OrderController.request()", new TraceCallback<>() {
             @Override
-            public Object call() {
+            public String call() {
                 // 여기가 비즈니스 로직
                 orderService.orderItem(itemId);
                 return "ok";
